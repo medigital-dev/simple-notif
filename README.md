@@ -12,13 +12,13 @@ Simple notification with Bootstrap 5 & Fontawesome 6
 - Include `simple-notif.js`
 
 # Usage
-Call function `toastFire()`
+Call function `fireNotif()`
 ```
-toastFire(message, icon, delay);
+fireNotif(message, icon, delay);
 
 message = 'any text' (default: '')
 icon = info, success, error, warning, question (default: info)
-delay = any interger on miliseconds (default: 5000)
+delay = any interger on miliseconds (default: 5000; if delay = 0 => autohide = false)
 ```
 
 # Thanks
