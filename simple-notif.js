@@ -3,19 +3,54 @@ const toastContainer =
 
 $("html body").append(toastContainer);
 
-function fireNotif(message = "", icon = "", position = "", delay = 2000) {
+/**
+ * Menampilkan notifikasi.
+ * Bisa menerima parameter sebagai objek konfigurasi atau individual parameter.
+ *
+ * @param {string|Object} message - Pesan notifikasi.
+ * @param {Object} [icon=""] - Tipe notifikasi info|success|error|warning|question. Default ""
+ * @param {string} [position=""] - Posisi notifikasi top-start|top-center|top-end|middle-start|middle-center|middle-end|bottom-start|bottom-center|bottom-end. Default top-end
+ * @param {interger} [delay=2000] - Waktu notifikasi tampil (mili second). Default 2000. Jika diisi 0 maka akan tampil terus dengan tombol tutup.
+ */
+// function fireNotif(message = "", icon = "", position = "", delay = 2000) {
+function fireNotif(messageOrConfig, ...params) {
+  let config;
+  if (typeof messageOrConfig === "object") {
+    if (params.length > 0) {
+      console.log(
+        "fireNotif() tidak boleh memiliki parameter tambahan jika menggunakan objek konfigurasi."
+      );
+    }
+
+    config = {
+      message: messageOrConfig.message,
+      icon: messageOrConfig.icon || "",
+      position: messageOrConfig.position || "",
+      delay: messageOrConfig.delay ?? 2000,
+    };
+  } else {
+    config = {
+      message: messageOrConfig,
+      icon: params[0] || "",
+      position: params[1] || "",
+      delay: params[2] ?? 2000,
+    };
+  }
+
   const toastElm = $(".toast-container");
   const closeBtn =
-    delay == 0
-      ? '<button type="button" class="btn-close btn-sm" data-bs-dismiss="toast" aria-label="Close"></button>'
+    config.delay == 0
+      ? '<button type="button" class="btn-close btn-sm" data-bs-dismiss="toast" title="Tutup Notifikasi" aria-label="Close"></button>'
       : "";
+
   toastElm.removeClass(
     "top-0 start-0 start-50 translate-middle-x end-0 top-50 translate-middle-y translate-middle bottom-0"
   );
-  const possitionClass = positionVal(position);
+
+  const possitionClass = positionVal(config.position);
   toastElm.addClass(possitionClass);
 
-  let data = getType(icon);
+  let data = getType(config.icon);
   let Elm =
     '<div class="toast align-items-center border-0 mb-1 ' +
     data.class +
@@ -24,7 +59,7 @@ function fireNotif(message = "", icon = "", position = "", delay = 2000) {
     '<div class="d-flex align-items-start w-100 me-2"><span class="">' +
     data.icon +
     "</span><div class='w-100'>" +
-    message +
+    config.message +
     "</div></div>" +
     closeBtn +
     "</div>" +
@@ -32,8 +67,8 @@ function fireNotif(message = "", icon = "", position = "", delay = 2000) {
   toastElm.append(Elm);
 
   var toast = new bootstrap.Toast($(".toast:last"), {
-    delay: delay,
-    autohide: delay == 0 ? false : true,
+    delay: config.delay,
+    autohide: config.delay == 0 ? false : true,
   });
   toast.show();
 
